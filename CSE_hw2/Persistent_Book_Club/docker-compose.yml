@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  book-service:
+    build: ./book-service-dir
+    restart: always
+    environment: 
+      - PORT=80
+      - MONGO_URL=mongodb://mongo:27017/
+    ports:
+      - "5001:80"
+    depends_on:
+      - mongo
+  
+  loans-service:
+    build: ./loan-service-dir
+    restart: always
+    environment:
+      - PORT=80
+      - MONGO_URL=mongodb://mongo:27017/   
+      - BOOKS_SERVICE_URL=http://book-service:80/
+    ports:
+      - "5002:80"
+    depends_on:
+      - mongo
+      - book-service
+  
+  loans-service-2:
+    build: ./loan-service-dir
+    restart: always
+    environment:
+      - PORT=80
+      - MONGO_URL=mongodb://mongo:27017/   
+      - BOOKS_SERVICE_URL=http://book-service:80/
+    ports:
+      - "5003:80"
+    depends_on:
+      - mongo
+      - book-service
+  
+  reverse-proxy:
+    build: ./reverse-proxy-dir
+    restart: always
+    ports:
+      - "80:80"
+    expose:
+      - "80"
+    depends_on:
+      - mongo
+      - book-service
+      - loans-service
+      - loans-service-2
+      
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"

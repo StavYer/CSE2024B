@@ -120,7 +120,7 @@ class Loans:  # Represents the endpoint /loans
         book_response = loan_service.check_if_in_library(loan_payload["ISBN"])
         book_details = book_response.json()
         if len(book_details) == 0 or book_response.status_code != 200:
-            return jsonify({"error": "book not found in the library"}), 404
+            return jsonify({"error": "book not found in the library"}), 422
         print("book details: ", book_details)
         print("hi!")
         loan_id = loan_service.increment_id()
